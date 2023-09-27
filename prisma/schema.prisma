@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model BloodType {
+  id             String           @id @default(uuid()) @db.Uuid
+  type           String           @unique @db.VarChar(8)
+  MilitaryPerson MilitaryPerson[]
+}
+
+model City {
+  name          String      @db.VarChar(48)
+  id            Int         @id @default(autoincrement())
+  departamentId Int
+  Departament   Departament @relation(fields: [departamentId], references: [id], onDelete: Cascade)
+}
+
+model Country {
+  name          String          @unique @db.VarChar(48)
+  id            Int             @id @default(autoincrement())
+  Departament   Departament[]
+  MilitaryForce MilitaryForce[]
+}
+
+model Departament {
+  name      String  @unique @db.VarChar(64)
+  id        Int     @id @default(autoincrement())
+  countryId Int
+  City      City[]
+  Country   Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
+}
+
+model MilitaryForce {
+  id                   String                 @id @default(uuid()) @db.Uuid
+  name                 String                 @unique @db.VarChar(48)
+  image_url            String                 @db.VarChar(255)
+  created_at           DateTime               @default(now()) @db.Timestamp(6)
+  countryId            Int
+  Country              Country                @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  MilitaryInstallation MilitaryInstallation[]
+  MilitaryRank         MilitaryRank[]
+}
+
+model MilitaryGrade {
+  id             String           @id @default(uuid()) @db.Uuid
+  name           String           @unique @db.VarChar(255)
+  image_url      String?          @db.VarChar(255)
+  created_at     DateTime         @default(now()) @db.Timestamp(6)
+  updated_at     DateTime         @updatedAt @db.Timestamp(6)
+  abbreviation   String           @db.VarChar(8)
+  militaryRankId String           @db.Uuid
+  MilitaryRank   MilitaryRank     @relation(fields: [militaryRankId], references: [id], onDelete: Cascade)
+  MilitaryPerson MilitaryPerson[]
+}
+
+model MilitaryInstallation {
+  id             String           @id @default(uuid()) @db.Uuid
+  name           String           @db.VarChar(255)
+  created_at     DateTime         @default(now()) @db.Timestamp(6)
+  updated_at     DateTime         @updatedAt @db.Timestamp(6)
+  miltaryForceId String           @db.Uuid
+  MilitaryForce  MilitaryForce    @relation(fields: [miltaryForceId], references: [id], onDelete: Cascade)
+  MilitaryPerson MilitaryPerson[]
+}
+
+model MilitaryPerson {
+  id                   String                @id @default(uuid()) @db.Uuid
+  phoneNumber          String                @unique @db.VarChar(16)
+  userId               String                @unique @db.Uuid
+  gradeId              String?               @db.Uuid
+  installationId       String?               @db.Uuid
+  bloodTypeId          String?               @db.Uuid
+  BloodType            BloodType?            @relation(fields: [bloodTypeId], references: [id], onDelete: SetNull)
+  MilitaryGrade        MilitaryGrade?        @relation(fields: [gradeId], references: [id], onDelete: SetNull)
+  MilitaryInstallation MilitaryInstallation? @relation(fields: [installationId], references: [id], onDelete: SetNull)
+  User                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model MilitaryRank {
+  id             String          @id @default(uuid()) @db.Uuid
+  name           String          @db.VarChar(48)
+  created_at     DateTime        @default(now()) @db.Timestamp(6)
+  updated_at     DateTime        @updatedAt @db.Timestamp(6)
+  miltaryForceId String          @db.Uuid
+  MilitaryGrade  MilitaryGrade[]
+  MilitaryForce  MilitaryForce   @relation(fields: [miltaryForceId], references: [id], onDelete: Cascade)
+}
+
+model Resource {
+  id               String             @id @default(uuid()) @db.Uuid
+  name             String             @unique
+  description      String?            @db.VarChar(255)
+  created_at       DateTime           @default(now()) @db.Timestamp(6)
+  updated_at       DateTime           @updatedAt @db.Timestamp(6)
+  ResourcesOnRoles ResourcesOnRoles[]
+}
+
+model ResourcesOnRoles {
+  created_at DateTime  @default(now()) @db.Timestamp(6)
+  updated_at DateTime  @updatedAt @db.Timestamp(6)
+  deleted_at DateTime? @db.Timestamp(6)
+  CAN_CREATE Boolean   @default(false)
+  CAN_READ   Boolean   @default(false)
+  CAN_UPDATE Boolean   @default(false)
+  CAN_DELETE Boolean   @default(false)
+  roleId     String    @db.Uuid
+  resourceId String    @db.Uuid
+  id         String    @id @db.Uuid
+  Resource   Resource  @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  Role       Role      @relation(fields: [roleId], references: [id], onDelete: Cascade)
+}
+
+model Role {
+  id               String             @id @default(uuid()) @db.Uuid
+  name             RoleType           @unique
+  created_at       DateTime           @default(now()) @db.Timestamp(6)
+  updated_at       DateTime           @updatedAt @db.Timestamp(6)
+  deleted_at       DateTime?          @db.Timestamp(6)
+  ResourcesOnRoles ResourcesOnRoles[]
+  User             User[]
+}
+
+model User {
+  id              String                 @id @default(uuid()) @db.Uuid
+  name            String                 @db.VarChar(48)
+  last_name       String                 @db.VarChar(40)
+  email           String                 @unique
+  image_url       String?                @db.VarChar(255)
+  password        String                 @db.VarChar(255)
+  last_login      DateTime?              @db.Timestamp(6)
+  active          Boolean                @default(false)
+  created_at      DateTime               @default(now()) @db.Timestamp(6)
+  updated_at      DateTime               @updatedAt @db.Timestamp(6)
+  deleted_at      DateTime?              @db.Timestamp(6)
+  roleId          String?                @db.Uuid
+  MilitaryPerson  MilitaryPerson?
+  Role            Role?                  @relation(fields: [roleId], references: [id])
+  UserSetPassword UserSetPasswordToken[]
+}
+
+model UserSetPasswordToken {
+  id         String   @id @default(uuid()) @db.Uuid
+  token      String   @unique
+  user_id    String   @db.Uuid
+  avaible    Boolean  @default(true)
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  updated_at DateTime @updatedAt @db.Timestamp(6)
+  User       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+enum RoleType {
+  ADMIN
+  STAFF
+  USER
+}
