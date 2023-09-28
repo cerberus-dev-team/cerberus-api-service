@@ -73,6 +73,69 @@ export class MilitaryPersonService {
     }
   }
 
+  async getMilitaryPerson(id: string) {
+    return await prisma.user.findUnique({
+      where: { id },
+      include: {
+        Role: true,
+        MilitaryPerson: {
+          include: {
+            MilitaryGrade: true,
+            BloodType: true,
+            MilitaryInstallation: {
+              include: {
+                MilitaryForce: true,
+              },
+            },
+          },
+        },
+      },
+    })
+  }
+
+  async getPersonalData(userId: string) {
+    return await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        last_name: true,
+        email: true,
+        MilitaryPerson: {
+          select: {
+            id: true,
+            phoneNumber: true,
+            MilitaryGrade: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            BloodType: {
+              select: {
+                id: true,
+                type: true,
+              },
+            },
+            MilitaryInstallation: {
+              select: {
+                id: true,
+                name: true,
+                MilitaryForce: {
+                  select: {
+                    id: true,
+                    name: true,
+                    image_url: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+  }
+
   async setPasswordFirstTime(email: string, userId: string, password: string) {
     try {
       const user = await prisma.user.update({

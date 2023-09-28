@@ -33,6 +33,36 @@ class MilitaryPersonController {
     }
   }
 
+  getMilitaryPersonById = async (req: Request, res: Response) => {
+    try {
+      const { query } = req
+      const id = (query.id as string) ? query.id : req.user
+
+      const user = await this.militaryPersonApp.getMilitaryPersonById(
+        String(id),
+      )
+
+      if (!user) {
+        handleResponse({
+          res,
+          data: "User not found",
+          status: StatusCodes.NOT_FOUND,
+        })
+        return
+      }
+
+      handleResponse({ res, data: user, status: StatusCodes.OK })
+      return
+    } catch (error) {
+      handleResponse({
+        res,
+        data: "Internal server error",
+        status: StatusCodes.INTERNAL_SERVER_ERROR,
+      })
+      return
+    }
+  }
+
   setPasswordFirstTime = async (req: Request, res: Response) => {
     try {
       const { body, params } = req

@@ -37,6 +37,18 @@ export class MilitaryPersonApp {
     return user
   }
 
+  async getMilitaryPersonById(id: string) {
+    const result = await this.militaryPersonService.getMilitaryPerson(id)
+
+    if (!result) {
+      return null
+    }
+
+    const { password: _, ...user } = result
+
+    return user
+  }
+
   async setPasswordFirstTime(email: string, userId: string, password: string) {
     const hashedPassword = await hashPassword(password)
     await this.militaryPersonService.setPasswordFirstTime(
