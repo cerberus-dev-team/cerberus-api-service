@@ -8,6 +8,12 @@ const militaryPersonRouter = Router()
 militaryPersonRouter.post("/", checkSession, militaryPersonController.create)
 
 militaryPersonRouter.get(
+  "/",
+  checkSession,
+  militaryPersonController.getMilitaryPersonnelByUserId,
+)
+
+militaryPersonRouter.get(
   "/profile",
   checkSession,
   militaryPersonController.getMilitaryPersonById,

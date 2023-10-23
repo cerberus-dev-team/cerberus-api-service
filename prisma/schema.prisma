@@ -66,6 +66,18 @@ model MilitaryInstallation {
   miltaryForceId String           @db.Uuid
   MilitaryForce  MilitaryForce    @relation(fields: [miltaryForceId], references: [id], onDelete: Cascade)
   MilitaryPerson MilitaryPerson[]
+  CameraSecurity SecurityNode[]
+}
+
+model SecurityNode {
+  id                     String               @id @default(uuid()) @db.Uuid
+  name                   String               @unique @default("Camara de seguridad inteligente") @db.VarChar(255)
+  location               String?               @db.VarChar(255)
+  token                  String               @unique @db.VarChar(255)
+  created_at             DateTime             @default(now()) @db.Timestamp(6)
+  updated_at             DateTime             @updatedAt @db.Timestamp(6)
+  militaryInstallation   MilitaryInstallation @relation(fields: [militaryInstallationId], references: [id], onDelete: Cascade)
+  militaryInstallationId String               @db.Uuid
 }
 
 model MilitaryPerson {

@@ -63,6 +63,24 @@ class MilitaryPersonController {
     }
   }
 
+  getMilitaryPersonnelByUserId = async (req: Request, res: Response) => {
+    try {
+      const { user } = req
+      const personnel =
+        await this.militaryPersonApp.getMilitaryPersonnelByUserId(user)
+
+      handleResponse({ res, data: personnel, status: StatusCodes.OK })
+      return
+    } catch (error) {
+      handleResponse({
+        res,
+        data: "Internal server error",
+        status: StatusCodes.INTERNAL_SERVER_ERROR,
+      })
+      return
+    }
+  }
+
   setPasswordFirstTime = async (req: Request, res: Response) => {
     try {
       const { body, params } = req

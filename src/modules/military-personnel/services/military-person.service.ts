@@ -50,6 +50,41 @@ export class MilitaryPersonService {
     }
   }
 
+  async getMilitaryPersonnelByUserId(installationId: string) {
+    return await prisma.user.findMany({
+      where: {
+        MilitaryPerson: { MilitaryInstallation: { id: installationId } },
+      },
+      include: {
+        MilitaryPerson: {
+          include: {
+            MilitaryGrade: true,
+            BloodType: true,
+          },
+        },
+      },
+    })
+  }
+
+  async getMilitaryInstallationByUserId(userId: string) {
+    const installationId = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        MilitaryPerson: {
+          select: {
+            MilitaryInstallation: {
+              select: {
+                id: true,
+              },
+            },
+          },
+        },
+      },
+    })
+
+    return installationId?.MilitaryPerson?.MilitaryInstallation?.id
+  }
+
   async createSetPasswordToken(userId: string, token: string) {
     try {
       const setPasswordToken = await prisma.userSetPasswordToken.create({
