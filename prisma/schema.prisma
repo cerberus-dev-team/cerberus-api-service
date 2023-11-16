@@ -67,12 +67,13 @@ model MilitaryInstallation {
   MilitaryForce  MilitaryForce    @relation(fields: [miltaryForceId], references: [id], onDelete: Cascade)
   MilitaryPerson MilitaryPerson[]
   CameraSecurity SecurityNode[]
+  ShootPractice  ShootPractice[]
 }
 
 model SecurityNode {
   id                     String               @id @default(uuid()) @db.Uuid
   name                   String               @unique @default("Camara de seguridad inteligente") @db.VarChar(255)
-  location               String?               @db.VarChar(255)
+  location               String?              @db.VarChar(255)
   token                  String               @unique @db.VarChar(255)
   created_at             DateTime             @default(now()) @db.Timestamp(6)
   updated_at             DateTime             @updatedAt @db.Timestamp(6)
@@ -91,6 +92,7 @@ model MilitaryPerson {
   MilitaryGrade        MilitaryGrade?        @relation(fields: [gradeId], references: [id], onDelete: SetNull)
   MilitaryInstallation MilitaryInstallation? @relation(fields: [installationId], references: [id], onDelete: SetNull)
   User                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ShootPractice        ShootPractice[]
 }
 
 model MilitaryRank {
@@ -153,6 +155,7 @@ model User {
   MilitaryPerson  MilitaryPerson?
   Role            Role?                  @relation(fields: [roleId], references: [id])
   UserSetPassword UserSetPasswordToken[]
+  ShootPractice   ShootPractice[]
 }
 
 model UserSetPasswordToken {
@@ -163,6 +166,18 @@ model UserSetPasswordToken {
   created_at DateTime @default(now()) @db.Timestamp(6)
   updated_at DateTime @updatedAt @db.Timestamp(6)
   User       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model ShootPractice {
+  id                   String               @id @default(uuid()) @db.Uuid
+  state                Boolean              @default(true)
+  created_at           DateTime             @default(now()) @db.Timestamp(6)
+  installationId       String               @db.Uuid
+  MilitaryInstallation MilitaryInstallation @relation(fields: [installationId], references: [id], onDelete: Cascade)
+  militaryPersonId     String               @db.Uuid
+  MilitaryPerson       MilitaryPerson       @relation(fields: [militaryPersonId], references: [id], onDelete: Cascade)
+  registeredBy         String               @db.Uuid
+  User                 User                 @relation(fields: [registeredBy], references: [id], onDelete: Cascade)
 }
 
 enum RoleType {
