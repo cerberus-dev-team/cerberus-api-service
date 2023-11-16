@@ -12,4 +12,10 @@ export const envVariables = {
   BASE_FRONTEND_URL: process.env.BASE_FRONTEND_URL ?? "http://localhost:5173",
   JWT_SECRET: process.env.JWT_SECRET ?? "",
   CLIENT_SECRET: process.env.CLIENT_SECRET ?? "",
+  MQTT_HOST: process.env.MQTT_HOST ?? "",
+  MQTT_PORT: Number(process.env.MQTT_PORT) || 1883,
+  MQTT_USERNAME: process.env.MQTT_USERNAME ?? "",
+  MQTT_PASSWORD: process.env.MQTT_PASSWORD ?? "",
+  MQTT_PROTOCOL: process.env.MQTT_PROTOCOL ?? "",
+  MQTT_PATH: process.env.MQTT_PATH ?? "/",
 }

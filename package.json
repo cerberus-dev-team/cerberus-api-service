@@ -50,6 +50,7 @@
     "joi": "17.10.2",
     "jsonwebtoken": "^9.0.2",
     "morgan": "1.10.0",
+    "mqtt": "^5.2.2",
     "nodemailer": "6.9.5",
     "uuid": "^9.0.1"
   }

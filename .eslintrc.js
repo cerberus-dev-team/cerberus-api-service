@@ -17,6 +17,8 @@ module.exports = {
     "@typescript-eslint/no-unsafe-argument": "off",
     "padding-line-between-statements": "off",
     "@typescript-eslint/unbound-method": "off",
+    "@typescript-eslint/no-unsafe-return": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
     "prettier/prettier": ["error", { endOfLine: "auto", semi: false }],
     semi: ["error", "never"],
   },
