@@ -157,7 +157,6 @@ model User {
   MilitaryPerson  MilitaryPerson?
   Role            Role?                  @relation(fields: [roleId], references: [id])
   UserSetPassword UserSetPasswordToken[]
-  ShootPractice   ShootPractice[]
 }
 
 model UserSetPasswordToken {
@@ -178,8 +177,6 @@ model ShootPractice {
   MilitaryInstallation MilitaryInstallation @relation(fields: [installationId], references: [id], onDelete: Cascade)
   militaryPersonId     String               @db.Uuid
   MilitaryPerson       MilitaryPerson       @relation(fields: [militaryPersonId], references: [id], onDelete: Cascade)
-  registeredBy         String               @db.Uuid
-  User                 User                 @relation(fields: [registeredBy], references: [id], onDelete: Cascade)
 }
 
 model MilitaryInstallationAnomaly {
